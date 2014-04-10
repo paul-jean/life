@@ -1,23 +1,122 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title> Game of Life in D3.js </title>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="build/react.js"></script>
-    <script src="build/JSXTransformer.js"></script>
-    <script type="text/jsx" src="life.js"></script>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Life by paul-jean</title>
   </head>
+
   <body>
-    <h1> Game of Life </h1>
-    <div id="svg_canvas"></div>
-    <div id="instructions">
-      <h3> Instructions </h3>
-      <p>
-        This Game of Life simulation starts from a random initial grid.<br>
-        Clicking the individual cells toggles them on and off.<br>
-        Clicking the "start" button starts the simulation.<br>
-        Clicking the "stop" button pauses the simulation.<br>
-      </p>
+    <header>
+      <div class="inner">
+        <h1>Life</h1>
+        <h2></h2>
+        <a href="https://github.com/paul-jean/life" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="game-of-life-in-javascript" class="anchor" href="#game-of-life-in-javascript"><span class="octicon octicon-link"></span></a>Game of Life in Javascript</h2>
+
+<p>This is a minimal implementation of Conway's Game of Life, for the purposes of exploring 
+different Javascript user interface frameworks.  </p>
+
+<p>So far there are implementations using:</p>
+
+<ul>
+<li>native Javascript graphics (HTML5 canvas)</li>
+<li>D3.js (SVG)</li>
+<li>React.js (SVG)<br>
+</li>
+</ul><h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>Clone this repo:</p>
+
+<div class="highlight highlight-bash"><pre><span class="o">[</span>rule146@rule146: code<span class="o">]</span><span class="nv">$ </span>git clone https://github.com/jskelcy/life.git
+Cloning into <span class="s1">'life'</span>...
+remote: Counting objects: 178, <span class="k">done</span>.
+remote: Compressing objects: 100% <span class="o">(</span>124/124<span class="o">)</span>, <span class="k">done</span>.
+remote: Total 178 <span class="o">(</span>delta 70<span class="o">)</span>, reused 147 <span class="o">(</span>delta 53<span class="o">)</span>
+Receiving objects: 100% <span class="o">(</span>178/178<span class="o">)</span>, 259.97 KiB <span class="p">|</span> 0 bytes/s, <span class="k">done</span>.
+Resolving deltas: 100% <span class="o">(</span>70/70<span class="o">)</span>, <span class="k">done</span>.
+Checking connectivity... <span class="k">done</span>.
+<span class="o">[</span>rule146@rule146: code<span class="o">]</span><span class="nv">$ </span><span class="nb">cd </span>life/
+</pre></div>
+
+<p>Check out the branch with the implementation you're interested in. To see the HTML5 canvas implementation check out the 'canvas' branch:</p>
+
+<div class="highlight highlight-bash"><pre><span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>git checkout canvas
+Switched to branch <span class="s1">'canvas'</span>
+Your branch is up-to-date with <span class="s1">'origin/canvas'</span>.
+</pre></div>
+
+<p>For the d3.js implementation, check out the 'd3' branch:</p>
+
+<div class="highlight highlight-bash"><pre><span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>git checkout d3
+Switched to branch <span class="s1">'d3'</span>
+Your branch is up-to-date with <span class="s1">'origin/d3'</span>.
+</pre></div>
+
+<p>The react.js implementation is (currently) on the 'master' branch:</p>
+
+<div class="highlight highlight-bash"><pre><span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>git checkout master
+Switched to branch <span class="s1">'master'</span>
+Your branch is up-to-date with <span class="s1">'origin/master'</span>.
+</pre></div>
+
+<p>Start a local http server in this repo (here I'm using port 8000) and open localhost in chrome:</p>
+
+<div class="highlight highlight-bash"><pre><span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>python -m SimpleHTTPServer 8000 <span class="p">&amp;</span>
+<span class="o">[</span>1<span class="o">]</span> 3548
+<span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>Serving HTTP on 0.0.0.0 port 8000 ...
+<span class="o">[</span>rule146@rule146: life<span class="o">]</span><span class="nv">$ </span>open -a /Applications/Google<span class="se">\ </span>Chrome.app/ http://localhost:8000
+</pre></div>
+
+<p>You should see a grid and some buttons for controlling the update animation:</p>
+
+<p><img src="images/d3-screenshot.png" alt="Game of Life screenshot" title="Game of Life screenshot"></p>
+
+<p>Here's what the animation looks like:</p>
+
+<p><img src="images/gol-d3-random.gif" alt="Game of Life animation" title="Game of Life update animation"></p>
+
+<h3>
+<a name="project-page" class="anchor" href="#project-page"><span class="octicon octicon-link"></span></a>Project page</h3>
+
+<p>See the project page <a href="http://jskelcy.github.io/life/">here</a>.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/paul-jean/life/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/paul-jean/life/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/paul-jean/life"></a> is maintained by <a href="https://github.com/paul-jean">paul-jean</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
+
+  
   </body>
 </html>
