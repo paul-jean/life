@@ -2,8 +2,11 @@
 
   var gameState;
   var gameGrid;
-  var ctx;
   var intervalId;
+  var divSize = 10;
+  var divBorderWidth = 1;
+  // assume a square grid:
+  var gridSize = 50;
 
   var startAnimate = function() {
     var update = function(){
@@ -18,19 +21,29 @@
   };
 
   exports.onload = function() {
+    var row, col;
     gameState = initGame();
     gameGrid = document.getElementById("grid");
+    gameGrid.style.width = divSize * gridSize;
     // add 50 child divs for each row, with row ids 0-49
-    for (var row = 0; row < gameState.dim; row ++) {
+    for (row = 0; row < gameState.dim; row ++) {
       var rowDiv = document.createElement('div');
       rowDiv.id = "r" + row;
       // for each row div, add 50 child divs for each column, with column ids 0-49
-      for (var col = 0; col < gameState.dim; col ++) {
+      for (col = 0; col < gameState.dim; col ++) {
         var rowColDiv = document.createElement('div');
         rowColDiv.id = rowDiv.id + "c" + col;
-        rowColDiv.height = 10;
-        rowColDiv.width = 10;
-        rowColDiv["border-color"] = "black";
+        rowColDiv.style.width = divSize - 2 * divBorderWidth;
+        rowColDiv.style.height = divSize - 2 * divBorderWidth;
+        // left-align the first cell div in each row:
+        if (col === 0) {
+          rowColDiv.style.clear = "both";
+        }
+        rowColDiv.style.cssFloat = "left";
+        rowColDiv.style.borderStyle = "solid";
+        rowColDiv.style.borderColor = "gray";
+        rowColDiv.style.borderWidth = divBorderWidth + "px";
+        rowColDiv.style.backgroundColor = "white";
         // TODO is this field on the div actually necessary?
         // I don't seem to be using it right now :-/
         rowColDiv.valObj = gameState.grid[row][col];
@@ -38,15 +51,15 @@
       }
       gameGrid.appendChild(rowDiv);
     }
-    // TODO add event listeners to divs
+    // TODO add click event listeners to divs
     renderGrid(gameState);
   };
 
   var initGame = function() {
     return(
       {
-      dim: 50,
-      grid: RandomGameGrid(50)
+      dim: gridSize,
+      grid: RandomGameGrid(gridSize)
     }
     );
   };
@@ -54,14 +67,16 @@
   var renderGrid = function(gameState) {
     var row, col, cellId, rowColDiv;
 
-    for (row = 0; i < gameState.dim; row ++) {
-      for (col = 0; j < gameState.dim; col ++) {
+    for (row = 0; row < gameState.dim; row ++) {
+      for (col = 0; col < gameState.dim; col ++) {
         cellId = "r" + row + "c" + col;
         rowColDiv = document.getElementById(cellId);
-        if (gameState.grid[i][j].val == 1) {
-          rowColDiv["background-color"] = "rgb(0, 0, 0)";
+        if (gameState.grid[row][col].val == 1) {
+          //rowColDiv.style["background-color"] = "rgb(0, 0, 0)";
+          rowColDiv.style.backgroundColor = "black";
         } else {
-          rowColDiv["background-color"] = "rgb(255, 255, 255)";
+          //rowColDiv.style["background-color"] = "rgb(255, 255, 255)";
+          rowColDiv.style.backgroundColor = "white";
         }
       }
     }
@@ -76,13 +91,11 @@
     newState.grid = gameState.grid;
     for(i = 0; i < gameState.dim; i++){
         for(j = 0; j < gameState.dim; j++){
-            //this moves through the entire grid
             var currNode = gameState.grid[i][j];
             var livingNeighbors = 0;
             //traverse the 8 cells around the current cell
             for(k = i - 1; k <= i + 1; k ++){
                 for(m = j - 1; m <= j + 1; m ++){
-                    //this looks for adj node
                     if((k < 0) || (m < 0) || (k >= gameState.dim) || (m >= gameState.dim)){
                         continue;
                     }
