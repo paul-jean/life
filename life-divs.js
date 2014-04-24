@@ -11,7 +11,7 @@
   var startAnimate = function() {
     var update = function(){
       gameState = stepGame(gameState);
-      renderGrid(gameState);
+      updateGrid(gameState);
     };
     intervalId = setInterval(update, 100);
   };
@@ -20,17 +20,25 @@
     clearInterval(intervalId);
   };
 
-  exports.onload = function() {
+  var initGame = function() {
+    return(
+      {
+      dim: gridSize,
+      grid: RandomGameGrid(gridSize)
+    }
+    );
+  };
+
+  var newGrid = function() {
     var row, col;
-    gameState = initGame();
     gameGrid = document.getElementById("grid");
     gameGrid.style.width = divSize * gridSize;
     // add 50 child divs for each row, with row ids 0-49
-    for (row = 0; row < gameState.dim; row ++) {
+    for (row = 0; row < gridSize; row ++) {
       var rowDiv = document.createElement('div');
       rowDiv.id = "r" + row;
       // for each row div, add 50 child divs for each column, with column ids 0-49
-      for (col = 0; col < gameState.dim; col ++) {
+      for (col = 0; col < gridSize; col ++) {
         var rowColDiv = document.createElement('div');
         rowColDiv.id = rowDiv.id + "c" + col;
         rowColDiv.style.width = divSize - 2 * divBorderWidth;
@@ -46,25 +54,15 @@
         rowColDiv.style.backgroundColor = "white";
         // TODO is this field on the div actually necessary?
         // I don't seem to be using it right now :-/
-        rowColDiv.valObj = gameState.grid[row][col];
+        // rowColDiv.valObj = gameState.grid[row][col];
         rowDiv.appendChild(rowColDiv);
       }
       gameGrid.appendChild(rowDiv);
     }
     // TODO add click event listeners to divs
-    renderGrid(gameState);
   };
 
-  var initGame = function() {
-    return(
-      {
-      dim: gridSize,
-      grid: RandomGameGrid(gridSize)
-    }
-    );
-  };
-
-  var renderGrid = function(gameState) {
+  var updateGrid = function(gameState) {
     var row, col, cellId, rowColDiv;
 
     for (row = 0; row < gameState.dim; row ++) {
@@ -72,17 +70,14 @@
         cellId = "r" + row + "c" + col;
         rowColDiv = document.getElementById(cellId);
         if (gameState.grid[row][col].val == 1) {
-          //rowColDiv.style["background-color"] = "rgb(0, 0, 0)";
           rowColDiv.style.backgroundColor = "black";
         } else {
-          //rowColDiv.style["background-color"] = "rgb(255, 255, 255)";
           rowColDiv.style.backgroundColor = "white";
         }
       }
     }
 
   };
-
 
   var stepGame = function(gameState) {
     var newState = initGame(),
@@ -147,6 +142,11 @@
     return grid;
   }
 
+  exports.onload = function() {
+    newGrid();
+    gameState = initGame();
+    updateGrid(gameState);
+  };
   exports.startAnimate = startAnimate;
   exports.stopAnimate = stopAnimate;
 
