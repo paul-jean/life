@@ -5,7 +5,7 @@
   var intervalId;
   var divSize = 10;
   var divBorderWidth = 1;
-  // assume a square grid:
+  // use a square grid:
   var gridSize = 50;
 
   var startAnimate = function() {
@@ -24,7 +24,7 @@
     return(
       {
       dim: gridSize,
-      grid: RandomGameGrid(gridSize)
+      grid: randomGameGrid(gridSize)
     }
     );
   };
@@ -64,7 +64,6 @@
 
   var updateGrid = function(gameState) {
     var row, col, cellId, rowColDiv;
-
     for (row = 0; row < gameState.dim; row ++) {
       for (col = 0; col < gameState.dim; col ++) {
         cellId = "r" + row + "c" + col;
@@ -76,7 +75,6 @@
         }
       }
     }
-
   };
 
   var stepGame = function(gameState) {
@@ -125,7 +123,7 @@
     return newState;
   };
 
-  function RandomGameGrid(dim){
+  var randomGameGrid = function (dim){
     var grid = new Array(dim), i;
     for (i = 0; i < dim; i++){
         grid[i] = new Array(dim);
@@ -140,7 +138,7 @@
         }
     }
     return grid;
-  }
+  };
 
   exports.onload = function() {
     newGrid();
