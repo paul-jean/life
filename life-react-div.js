@@ -8,91 +8,17 @@
   // use a square grid:
   var gridSize = 50;
 
-  var update = function(){
-    gameState = stepGame(gameState);
-    updateGrid(gameState);
-  };
-
-  var handleStart =  function() {
-    runningQ = true;
-    intervalID = requestAnimationFrame(update);
-  };
-
-  var handleStop  = function() {
-    runningQ = false;
-    cancelAnimationFrame(intervalID);
-  };
-
-  var newGrid = function() {
-    var row, col;
-    var gameGrid = document.createElement("div");
-    gameGrid.style.width = divSize * gridSize;
-    // add 50 child divs for each row, with row ids 0-49
-    for (row = 0; row < gridSize; row ++) {
-      var rowDiv = document.createElement('div');
-      rowDiv.id = "r" + row;
-      // for each row div, add 50 child divs for each column, with column ids 0-49
-      for (col = 0; col < gridSize; col ++) {
-        var rowColDiv = document.createElement('div');
-        rowColDiv.id = rowDiv.id + "c" + col;
-        rowColDiv.style.width = divSize - 2 * divBorderWidth;
-        rowColDiv.style.height = divSize - 2 * divBorderWidth;
-        // left-align the first cell div in each row:
-        if (col === 0) {
-          rowColDiv.style.clear = "both";
-        }
-        rowColDiv.style.cssFloat = "left";
-        rowColDiv.style.borderStyle = "solid";
-        rowColDiv.style.borderColor = "gray";
-        rowColDiv.style.borderWidth = divBorderWidth + "px";
-        rowColDiv.style.backgroundColor = "white";
-        // TODO is this field on the div actually necessary?
-        // I don't seem to be using it right now :-/
-        // rowColDiv.valObj = gameState.grid[row][col];
-        rowDiv.appendChild(rowColDiv);
-      }
-      gameGrid.appendChild(rowDiv);
-    }
-    return gameGrid;
-  };
-
-  var updateGrid = function(gameState) {
-    var row, col, cellId, rowColDiv;
-    for (row = 0; row < gameState.dim; row ++) {
-      for (col = 0; col < gameState.dim; col ++) {
-        cellId = "r" + row + "c" + col;
-        rowColDiv = document.getElementById(cellId);
-        if (gameState.grid[row][col].val == 1) {
-          rowColDiv.style.backgroundColor = "black";
-        } else {
-          rowColDiv.style.backgroundColor = "white";
-        }
-      }
-    }
-  };
-
-  var initGame = function() {
-    return(
-      {
-      dim: gridSize,
-      grid: randomGameGrid(gridSize)
-    }
-    );
-  };
-
   var stepGame = function(gameState) {
-    var newState = initGame(),
-        newLiving = Array(),
+    var newLiving = Array(),
         newDead = Array(), i, j, k, m;
-    newState.grid = gameState.grid;
-    for(i = 0; i < gameState.dim; i++){
-        for(j = 0; j < gameState.dim; j++){
+    for(i = 0; i < gridSize; i++){
+        for(j = 0; j < gridSize; j++){
             var currNode = gameState.grid[i][j];
             var livingNeighbors = 0;
             //traverse the 8 cells around the current cell
             for(k = i - 1; k <= i + 1; k ++){
                 for(m = j - 1; m <= j + 1; m ++){
-                    if((k < 0) || (m < 0) || (k >= gameState.dim) || (m >= gameState.dim)){
+                    if((k < 0) || (m < 0) || (k >= gridSize) || (m >= gridSize)){
                         continue;
                     }
                     livingNeighbors += gameState.grid[k][m].val;
@@ -117,13 +43,13 @@
     }
     for (i = 0; i < newDead.length; i++) {
         var killMe = newDead[i];
-        newState.grid[killMe.yCord][killMe.xCord].val = 0;
+        gameState.grid[killMe.yCord][killMe.xCord].val = 0;
     }
     for (i = 0; i < newLiving.length; i++) {
         var giveLife = newLiving[i];
-        newState.grid[giveLife.yCord][giveLife.xCord].val = 1;
+        gameState.grid[giveLife.yCord][giveLife.xCord].val = 1;
     }
-    return newState;
+    return gameState;
   };
 
   var randomGameGrid = function (dim){
@@ -143,43 +69,60 @@
     return grid;
   };
 
+
   var Cell = React.createClass({
     render: function() {
       var dim = this.props.dim;
+      var col = this.props.col;
+      var row = this.props.row;
+      var leftAlignQ = col === 0 ? true : false;
+      var style = {
+        width: 10,
+        height: 10,
+        backgroundColor: this.props.color, 
+        border: "solid gray 1px",
+        "float": "left",
+        clear: leftAlignQ ? "both" : "none"
+      };
       return (
-        <div
-          width = {dim} height = {dim}
-          style =
-          "background-color:" + {this.props.color} + ";" +
-          "border: solid gray 1px;"
+        <div width = {dim} height = {dim} style = {style} >
         </div>
       );
     }
   });
 
   var Board = React.createClass({
-    getInitialState: function() {
-      return {gameState: initGame()};
+    startAnimate: function() {
+      var update = function(){
+        this.setState(stepGame(this.state));
+      }.bind(this);
+      intervalId = setInterval(update, 100);
     },
-    componentWillMount: function() {
-      newGrid();
+
+    stopAnimate: function() {
+      clearInterval(intervalId);
+    },
+
+    getInitialState: function () {
+      return {grid: randomGameGrid(gridSize)};
     },
     render: function() {
-      updateGrid(gameState);
       var a = [];
       for (var row=0; row<50; row++) {
         for (var col=0; col<50; col++) {
           a.push(<Cell
-                 dim='10' col={col} row={row}
-                 color={this.state[[row, col]].val === 1 ? 'black': 'white'}
+                 dim = '10' col = {col} row = {row}
+                 color = {this.state.grid[row][col].val === 1 ? "black" : "white"}
                  />);
         }
       }
       return (
         <div>
-          <input id="startButton" type="button" value="start" onClick={handleStart}/>
-          <input id="stopButton" type="button" value="stop" onClick={handleStop}/>
-          {gameGrid}
+          <input id="startButton" type="button" value="start" onClick={this.startAnimate}/>
+          <input id="stopButton" type="button" value="stop" onClick={this.stopAnimate}/>
+          <div width= {divSize * gridSize}>
+            {a}
+          </div>
         </div>
       )
     }
