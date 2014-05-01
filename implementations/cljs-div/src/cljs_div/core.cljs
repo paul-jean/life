@@ -42,21 +42,51 @@
 (defn matrix-string [matrix]
   (clojure.string/join "\n" (vec (map #(print-row %) matrix))))
 
+;;(println (.item (.getElementsByTagName js/document "body") 0))
+;;(.createElement js/document "div")
+
 (def grid (.getElementById js/document "grid"))
 
-(doseq
-  [row (range 50)
-   col (range 50)]
-  (->> (.createElement js/document "div")
-       (add-style row col ,)
-       (add-position row col ,)
-       (.appendChild js/document grid))
-  )
-(.appendChild (add-position row col (add-style row col (.createElement js/document "div"))))
-,,,,,,
-(doseq
-  [state (take 10 (iterate
-           (fn [matrix] (update matrix))
-           (rand-matrix 25 50)))]
+;;(println
+;;  (.appendChild
+;;    (.item (.getElementsByTagName js/document "body") 0)
+;;    (.setAttribute (.createElement js/document "div") "id" "grid")))
 
-  (println (matrix-string state)))
+;;(.setAttribute
+;;  (.appendChild
+;;    (take 1 (.getElementsByTagName js/document "body"))
+;;    (.createElement js/document "div"))
+;;  "id" "grid")
+;;
+;;(def grid (.getElementById js/document "grid"))
+;;
+;;(println grid)
+;;
+;;(.createElement js/document "div")
+
+(let [div (.createElement js/document "div")
+      grid (.getElementById js/document "grid")]
+  (.setAttribute div "height" 10)
+  (.setAttribute div "width" 10)
+  (.setAttribute div "style" "background-color:black")
+  (.appendChild grid div))
+
+;;(defn update-grid [matrix]
+;;(doseq
+;;  [row (range 50)
+;;   col (range 50)]
+;;  (->> (.createElement js/document "div")
+;;       (add-style row col ,)
+;;       (add-position row col ,)
+;;       (.appendChild js/document grid))
+;;  )
+;;)
+
+;; (.appendChild (add-position row col (add-style row col (.createElement js/document "div"))))
+
+;;(doseq
+;;  [state (take 10 (iterate
+;;           (fn [matrix] (update matrix))
+;;           (rand-matrix 25 50)))]
+;;
+;;  (println (matrix-string state)))
