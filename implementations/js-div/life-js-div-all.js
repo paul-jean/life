@@ -13,7 +13,7 @@
       gameState = stepGame(gameState);
       updateGrid(gameState);
     };
-    intervalId = setInterval(update, 500);
+    intervalId = setInterval(update, 100);
   };
 
   var stopAnimate = function() {
@@ -30,12 +30,19 @@
   };
 
   var newGrid = function() {
-    var row, col;
+    var row, col, rowDiv;
     gameGrid = document.getElementById("grid");
+    // remove existing rows
+    if (document.getElementById("r" + 0)) {
+      for (row = 0; row < gridSize; row ++) {
+        rowDiv = document.getElementById("r" + row);
+        gameGrid.removeChild(rowDiv);
+      }
+    }
     gameGrid.style.width = divSize * gridSize;
     // add 50 child divs for each row, with row ids 0-49
     for (row = 0; row < gridSize; row ++) {
-      var rowDiv = document.createElement('div');
+      rowDiv = document.createElement('div');
       rowDiv.id = "r" + row;
       // for each row div, add 50 child divs for each column, with column ids 0-49
       for (col = 0; col < gridSize; col ++) {
@@ -63,16 +70,13 @@
   };
 
   var updateGrid = function(gameState) {
+    newGrid();
     var row, col, cellId, rowColDiv;
     for (row = 0; row < gameState.dim; row ++) {
       for (col = 0; col < gameState.dim; col ++) {
         cellId = "r" + row + "c" + col;
         rowColDiv = document.getElementById(cellId);
-        if (gameState.grid[row][col].val === 1 && rowColDiv.style.backgroundColor === "black") {
-          rowColDiv.style.backgroundColor = "gray";
-        } else if (gameState.grid[row][col].val === 0 && rowColDiv.style.backgroundColor === "white") {
-          rowColDiv.style.backgroundColor = "gray";
-        } else if (gameState.grid[row][col].val === 1) {
+        if (gameState.grid[row][col].val === 1) {
           rowColDiv.style.backgroundColor = "black";
         } else if (gameState.grid[row][col].val === 0) {
           rowColDiv.style.backgroundColor = "white";
@@ -145,7 +149,6 @@
   };
 
   exports.onload = function() {
-    newGrid();
     gameState = initGame();
     updateGrid(gameState);
   };
