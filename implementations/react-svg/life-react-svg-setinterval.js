@@ -2,6 +2,12 @@
 (function() {
 
   var Cell = React.createClass({
+    /*
+    shouldComponentUpdate: function(nextProps) {
+      return this.props.fill !== nextProps.fill;
+    },
+    */
+
     handleCellClicked: function() {
       this.props.handleCellClicked(this.props.row, this.props.col);
     },
@@ -87,6 +93,7 @@
         var r = [];
         for (var col = 0 ; col < 50; col ++ ) {
           r.push(Math.round(Math.random()));
+          //r.push(0);
         }
         _state.push(r);
       };

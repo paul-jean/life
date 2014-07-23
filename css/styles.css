@@ -6,6 +6,11 @@ h3 {
   text-align:left
 }
 
+#canvas {
+  float: left;
+  clear: both;
+}
+
 #svg_canvas {
   height:500px;
   width:500px;
